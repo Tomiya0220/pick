@@ -20,7 +20,7 @@
   .cell.filled { background: #4a90e2; }
   .cell.marked { background: #ffcccc; }
   .hint {
-    font-size: 12px; color: #333; display: flex; justify-content: center; align-items: center;
+    font-size: 12px; color: #333; display: flex; flex-direction: column; justify-content: center; align-items: center;
   }
   button {
     margin-top: 10px; padding: 8px 12px; border: none;
@@ -45,36 +45,11 @@ let solution = [];
 let userGrid = [];
 const board = document.getElementById("board");
 
-// 手作りの解ける問題セット
 const patterns = [
-  [
-    [1,0,1,0,1],
-    [0,1,1,1,0],
-    [1,1,0,1,1],
-    [0,1,1,1,0],
-    [1,0,1,0,1]
-  ],
-  [
-    [0,1,1,1,0],
-    [1,0,1,0,1],
-    [1,1,1,1,1],
-    [1,0,1,0,1],
-    [0,1,1,1,0]
-  ],
-  [
-    [1,1,1,1,1],
-    [1,0,0,0,1],
-    [1,0,1,0,1],
-    [1,0,0,0,1],
-    [1,1,1,1,1]
-  ],
-  [
-    [0,0,1,0,0],
-    [0,1,1,1,0],
-    [1,1,1,1,1],
-    [0,1,1,1,0],
-    [0,0,1,0,0]
-  ]
+  [[1,0,1,0,1],[0,1,1,1,0],[1,1,0,1,1],[0,1,1,1,0],[1,0,1,0,1]],
+  [[0,1,1,1,0],[1,0,1,0,1],[1,1,1,1,1],[1,0,1,0,1],[0,1,1,1,0]],
+  [[1,1,1,1,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,0,0,1],[1,1,1,1,1]],
+  [[0,0,1,0,0],[0,1,1,1,0],[1,1,1,1,1],[0,1,1,1,0],[0,0,1,0,0]]
 ];
 
 function getHints(line) {
@@ -99,8 +74,11 @@ function createBoard() {
     let hint = getHints(col);
     let div = document.createElement("div");
     div.className = "hint";
-    div.innerText = hint.join("\n");
-    div.style.whiteSpace = "pre";
+    hint.forEach(n => {
+      let span = document.createElement("div");
+      span.textContent = n;
+      div.appendChild(span);
+    });
     board.appendChild(div);
   }
 
@@ -110,7 +88,11 @@ function createBoard() {
     let hint = getHints(solution[r]);
     let rowHint = document.createElement("div");
     rowHint.className = "hint";
-    rowHint.innerText = hint.join(" ");
+    hint.forEach(n => {
+      let span = document.createElement("div");
+      span.textContent = n;
+      rowHint.appendChild(span);
+    });
     board.appendChild(rowHint);
 
     for (let c = 0; c < SIZE; c++) {
@@ -130,7 +112,10 @@ function createBoard() {
 }
 
 function toggleFill(r, c, cell) {
-  if (cell.classList.contains("marked")) return;
+  // ×があれば消してから塗る
+  if (cell.classList.contains("marked")) {
+    cell.classList.remove("marked");
+  }
 
   if (cell.classList.contains("filled")) {
     cell.classList.remove("filled");
